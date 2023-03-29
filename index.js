@@ -1,3 +1,4 @@
+const platform = "./img/platform.png";
 const canvas = document.querySelector("canvas");
 const c = canvas.getContext("2d");
 canvas.width = innerWidth;
@@ -5,6 +6,9 @@ canvas.height = innerHeight;
 const gravity = 0.1;
 const playerSpeedX = 1;
 const playerSpeedY = 5;
+let scrollOffset = 0;
+const platformImage = new Image();
+platformImage.src = platform;
 const keysPressed = {
   right: false,
   left: false,
@@ -44,17 +48,19 @@ class Player {
 }
 
 class Platform {
-  constructor({ x, y }) {
+  constructor({ x, y, image }) {
     this.position = {
       x: x,
       y: y,
     };
-    this.width = 200;
-    this.height = 20;
+    this.image = image;
+    this.width = image.width;
+    this.height = image.height;
   }
   draw() {
-    c.fillStyle = "blue";
-    c.fillRect(this.position.x, this.position.y, this.width, this.height);
+    // c.fillStyle = "blue";
+    // c.fillRect(this.position.x, this.position.y, this.width, this.height);
+    c.drawImage(this.image, this.position.x, this.position.y);
   }
 }
 
@@ -74,10 +80,12 @@ function animate() {
   } else {
     player.velocity.x = 0;
     if (keysPressed.right) {
+      scrollOffset += playerSpeedX;
       platforms.forEach((platform) => {
         platform.position.x -= playerSpeedX;
       });
     } else if (keysPressed.left) {
+      scrollOffset -= playerSpeedX;
       platforms.forEach((platform) => {
         platform.position.x += playerSpeedX;
       });
@@ -101,6 +109,10 @@ function animate() {
       player.velocity.y = 0;
     }
   });
+  //check win condition
+  if (scrollOffset > 1000) {
+    console.log("WIN");
+  }
 }
 //event listeners for movement
 addEventListener("keydown", (event) => {
@@ -133,9 +145,10 @@ addEventListener("keyup", (event) => {
       break;
   }
 });
+
 const player = new Player();
 const platforms = [
-  new Platform({ x: 200, y: 800 }),
-  new Platform({ x: 600, y: 800 }),
+  new Platform({ image: platformImage, x: 200, y: 800 }),
+  new Platform({ image: platformImage, x: 1000, y: 800 }),
 ];
 animate();
