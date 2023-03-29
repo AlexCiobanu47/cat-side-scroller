@@ -1,4 +1,6 @@
 const platform = "./img/platform.png";
+const hills = "/img/hills.png";
+const background = "/img/background.png";
 const canvas = document.querySelector("canvas");
 const c = canvas.getContext("2d");
 canvas.width = 1024;
@@ -7,8 +9,13 @@ const gravity = 0.1;
 const playerSpeedX = 1;
 const playerSpeedY = 5;
 let scrollOffset = 0;
+const parallaxOffset = 0.2;
 const platformImage = new Image();
 platformImage.src = platform;
+const hillsImage = new Image();
+hillsImage.src = hills;
+const backgroundImage = new Image();
+backgroundImage.src = background;
 const keysPressed = {
   right: false,
   left: false,
@@ -63,12 +70,31 @@ class Platform {
     c.drawImage(this.image, this.position.x, this.position.y);
   }
 }
+class SceneryObject {
+  constructor({ x, y, image }) {
+    this.position = {
+      x: x,
+      y: y,
+    };
+    this.image = image;
+    this.width = image.width;
+    this.height = image.height;
+  }
+  draw() {
+    // c.fillStyle = "blue";
+    // c.fillRect(this.position.x, this.position.y, this.width, this.height);
+    c.drawImage(this.image, this.position.x, this.position.y);
+  }
+}
 
 function animate() {
   requestAnimationFrame(animate);
   //clear canvas and redraw
   c.fillStyle = "white";
   c.fillRect(0, 0, canvas.width, canvas.height);
+  sceneryObjects.forEach((object) => {
+    object.draw();
+  });
   platforms.forEach((platform) => {
     platform.draw();
   });
@@ -85,10 +111,16 @@ function animate() {
       platforms.forEach((platform) => {
         platform.position.x -= playerSpeedX;
       });
+      sceneryObjects.forEach((object) => {
+        object.position.x -= playerSpeedX + parallaxOffset;
+      });
     } else if (keysPressed.left) {
       scrollOffset -= playerSpeedX;
       platforms.forEach((platform) => {
         platform.position.x += playerSpeedX;
+      });
+      sceneryObjects.forEach((object) => {
+        object.position.x += playerSpeedX - parallaxOffset;
       });
     }
   }
@@ -151,5 +183,9 @@ const player = new Player();
 const platforms = [
   new Platform({ image: platformImage, x: -1, y: 470 }),
   new Platform({ image: platformImage, x: platformImage.width - 3, y: 470 }),
+];
+const sceneryObjects = [
+  new SceneryObject({ image: backgroundImage, x: -1, y: -1 }),
+  new SceneryObject({ image: hillsImage, x: -1, y: -1 }),
 ];
 animate();
