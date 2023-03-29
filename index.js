@@ -6,10 +6,9 @@ const c = canvas.getContext("2d");
 canvas.width = 1024;
 canvas.height = 576;
 const gravity = 0.1;
-const playerSpeedX = 1;
+const playerSpeedX = 5;
 const playerSpeedY = 5;
-let scrollOffset = 0;
-const parallaxOffset = 0.2;
+const parallaxOffset = playerSpeedX / 2;
 const platformImage = new Image();
 platformImage.src = platform;
 const hillsImage = new Image();
@@ -47,8 +46,6 @@ class Player {
     //add gravity
     if (this.position.y + this.height + this.velocity.y <= canvas.height) {
       this.velocity.y += gravity;
-    } else {
-      this.velocity.y = 0;
     }
     this.draw();
   }
@@ -86,7 +83,40 @@ class SceneryObject {
     c.drawImage(this.image, this.position.x, this.position.y);
   }
 }
-
+//game initialization
+let player = new Player();
+let platforms = [
+  new Platform({ image: platformImage, x: -1, y: 470 }),
+  new Platform({ image: platformImage, x: platformImage.width - 3, y: 470 }),
+  new Platform({
+    image: platformImage,
+    x: platformImage.width * 2 + 100,
+    y: 470,
+  }),
+];
+let sceneryObjects = [
+  new SceneryObject({ image: backgroundImage, x: -1, y: -1 }),
+  new SceneryObject({ image: hillsImage, x: -1, y: -1 }),
+];
+let scrollOffset = 0;
+//restart game function
+function restart() {
+  player = new Player();
+  platforms = [
+    new Platform({ image: platformImage, x: -1, y: 470 }),
+    new Platform({ image: platformImage, x: platformImage.width - 3, y: 470 }),
+    new Platform({
+      image: platformImage,
+      x: platformImage.width * 2 + 100,
+      y: 470,
+    }),
+  ];
+  sceneryObjects = [
+    new SceneryObject({ image: backgroundImage, x: -1, y: -1 }),
+    new SceneryObject({ image: hillsImage, x: -1, y: -1 }),
+  ];
+  scrollOffset = 0;
+}
 function animate() {
   requestAnimationFrame(animate);
   //clear canvas and redraw
@@ -146,6 +176,10 @@ function animate() {
   if (scrollOffset > 1000) {
     console.log("WIN");
   }
+  //check lose condition
+  if (player.position.y > canvas.height) {
+    restart();
+  }
 }
 //event listeners for movement
 addEventListener("keydown", (event) => {
@@ -179,13 +213,4 @@ addEventListener("keyup", (event) => {
   }
 });
 
-const player = new Player();
-const platforms = [
-  new Platform({ image: platformImage, x: -1, y: 470 }),
-  new Platform({ image: platformImage, x: platformImage.width - 3, y: 470 }),
-];
-const sceneryObjects = [
-  new SceneryObject({ image: backgroundImage, x: -1, y: -1 }),
-  new SceneryObject({ image: hillsImage, x: -1, y: -1 }),
-];
 animate();
