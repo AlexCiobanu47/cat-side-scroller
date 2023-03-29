@@ -146,7 +146,10 @@ function animate() {
   //check for movement
   if (keysPressed.right && player.position.x < 400) {
     player.velocity.x = playerSpeedX;
-  } else if (keysPressed.left && player.position.x > 100) {
+  } else if (
+    (keysPressed.left && player.position.x > 100) ||
+    (keysPressed.left && scrollOffset === 0 && player.position.x > 0)
+  ) {
     player.velocity.x = -playerSpeedX;
   } else {
     player.velocity.x = 0;
@@ -158,7 +161,7 @@ function animate() {
       sceneryObjects.forEach((object) => {
         object.position.x -= playerSpeedX - parallaxOffset;
       });
-    } else if (keysPressed.left) {
+    } else if (keysPressed.left && scrollOffset > 0) {
       scrollOffset -= playerSpeedX;
       platforms.forEach((platform) => {
         platform.position.x += playerSpeedX;
@@ -175,7 +178,6 @@ function animate() {
   if (player.velocity.y === 0.1) {
     canJump = true;
   }
-  console.log(player.velocity.y);
   //check for player and platform collision
   platforms.forEach((platform) => {
     if (
