@@ -1,4 +1,4 @@
-const platform = "./img/platform.png";
+const platform = "/img/platform.png";
 const hills = "/img/hills.png";
 const background = "/img/background.png";
 const jumpPlatform = "/img/platformSmallTall.png";
