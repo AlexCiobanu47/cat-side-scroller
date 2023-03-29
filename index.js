@@ -44,10 +44,10 @@ class Player {
 }
 
 class Platform {
-  constructor() {
+  constructor({ x, y }) {
     this.position = {
-      x: 200,
-      y: 800,
+      x: x,
+      y: y,
     };
     this.width = 200;
     this.height = 20;
@@ -62,7 +62,9 @@ function animate() {
   requestAnimationFrame(animate);
   //clear canvas and redraw
   c.clearRect(0, 0, canvas.width, canvas.height);
-  platform.draw();
+  platforms.forEach((platform) => {
+    platform.draw();
+  });
   player.update();
   //check for movement
   if (keysPressed.right && player.position.x < 400) {
@@ -72,27 +74,33 @@ function animate() {
   } else {
     player.velocity.x = 0;
     if (keysPressed.right) {
-      platform.position.x -= playerSpeedX;
+      platforms.forEach((platform) => {
+        platform.position.x -= playerSpeedX;
+      });
     } else if (keysPressed.left) {
-      platform.position.x += playerSpeedX;
+      platforms.forEach((platform) => {
+        platform.position.x += playerSpeedX;
+      });
     }
   }
   if (keysPressed.up) {
     player.velocity.y = -playerSpeedY;
   }
   //check for player and platform collision
-  if (
-    //player bottom and platform top
-    player.position.y + player.height <= platform.position.y &&
-    player.position.y + player.height + player.velocity.y >=
-      platform.position.y &&
-    // player right and platform left
-    player.position.x + player.width >= platform.position.x &&
-    //player left and platform right
-    player.position.x <= platform.position.x + platform.width
-  ) {
-    player.velocity.y = 0;
-  }
+  platforms.forEach((platform) => {
+    if (
+      //player bottom and platform top
+      player.position.y + player.height <= platform.position.y &&
+      player.position.y + player.height + player.velocity.y >=
+        platform.position.y &&
+      // player right and platform left
+      player.position.x + player.width >= platform.position.x &&
+      //player left and platform right
+      player.position.x <= platform.position.x + platform.width
+    ) {
+      player.velocity.y = 0;
+    }
+  });
 }
 //event listeners for movement
 addEventListener("keydown", (event) => {
@@ -126,5 +134,8 @@ addEventListener("keyup", (event) => {
   }
 });
 const player = new Player();
-const platform = new Platform();
+const platforms = [
+  new Platform({ x: 200, y: 800 }),
+  new Platform({ x: 600, y: 800 }),
+];
 animate();
