@@ -12,6 +12,7 @@ const keysPressed = {
   up: false,
   down: false,
 };
+//classes
 class Player {
   constructor() {
     this.position = {
@@ -43,12 +44,28 @@ class Player {
   }
 }
 
-const player = new Player();
+class Platform {
+  constructor() {
+    this.position = {
+      x: 200,
+      y: 800,
+    };
+    this.width = 200;
+    this.height = 20;
+  }
+  draw() {
+    c.fillStyle = "blue";
+    c.fillRect(this.position.x, this.position.y, this.width, this.height);
+  }
+}
+
 function animate() {
   requestAnimationFrame(animate);
   //clear canvas and redraw
   c.clearRect(0, 0, canvas.width, canvas.height);
+  platform.draw();
   player.update();
+  //check for movement
   if (keysPressed.right) {
     player.velocity.x = playerSpeedX;
   } else if (keysPressed.left) {
@@ -63,9 +80,21 @@ function animate() {
   if (player.velocity.y === 0) {
     canJump = true;
   }
+  //check for player and platform collision
+  if (
+    //player bottom and platform top
+    player.position.y + player.height <= platform.position.y &&
+    player.position.y + player.height + player.velocity.y >=
+      platform.position.y &&
+    // player right and platform left
+    player.position.x + player.width >= platform.position.x &&
+    //player left and platform right
+    player.position.x <= platform.position.x + platform.width
+  ) {
+    player.velocity.y = 0;
+  }
 }
-animate();
-
+//event listeners for movement
 addEventListener("keydown", (event) => {
   switch (event.key) {
     case "w":
@@ -96,3 +125,6 @@ addEventListener("keyup", (event) => {
       break;
   }
 });
+const player = new Player();
+const platform = new Platform();
+animate();
