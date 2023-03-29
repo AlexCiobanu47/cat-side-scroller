@@ -2,7 +2,8 @@ const platform = "./img/platform.png";
 const hills = "/img/hills.png";
 const background = "/img/background.png";
 const jumpPlatform = "/img/platformSmallTall.png";
-const catIdle = "/img/catIdle.png";
+const catIdleRight = "/img/catIdleRight.png";
+const catIdleLeft = "/img/catIdleLeft.png";
 const catRunRight = "img/catRunRight.png";
 const catRunLeft = "/img/catRunLeft.png";
 const canvas = document.querySelector("canvas");
@@ -13,6 +14,7 @@ const gravity = 0.1;
 const playerSpeedX = 3;
 const playerSpeedY = 7;
 const parallaxOffset = playerSpeedX / 2;
+//sprites
 const platformImage = new Image();
 platformImage.src = platform;
 const hillsImage = new Image();
@@ -21,8 +23,10 @@ const backgroundImage = new Image();
 backgroundImage.src = background;
 const jumpPlatformImage = new Image();
 jumpPlatformImage.src = jumpPlatform;
-const catIdleImage = new Image();
-catIdleImage.src = catIdle;
+const catIdleRightImage = new Image();
+catIdleRightImage.src = catIdleRight;
+const catIdleLeftImage = new Image();
+catIdleLeftImage.src = catIdleLeft;
 const catRunRightImage = new Image();
 catRunRightImage.src = catRunRight;
 const catRunLeftImage = new Image();
@@ -40,22 +44,24 @@ class Player {
       x: 100,
       y: 100,
     };
-    this.image = catIdleImage;
+    this.image = catIdleRightImage;
     this.frames = 0;
     this.sprites = {
       idle: {
-        right: catIdleImage,
+        right: catIdleRightImage,
+        left: catIdleLeftImage,
         cropWidth: 32,
       },
       running: {
         right: catRunRightImage,
+        left: catRunLeftImage,
         cropWidth: 32,
       },
     };
     this.currentSprite = this.sprites.idle.right;
     this.currentCropWidth = 32;
     this.currentFrame = 0;
-    this.width = 100;
+    this.width = 50;
     this.height = 50;
     this.velocity = {
       x: 0,
@@ -78,15 +84,16 @@ class Player {
     );
   }
   update() {
-    //update movement
-    this.frames++;
-    if (this.frames % 20 === 0) {
-      this.currentFrame++;
-    }
     //idle animation
     if (
       this.currentFrame == 10 &&
       this.currentSprite === this.sprites.idle.right
+    ) {
+      this.currentFrame = 0;
+    }
+    if (
+      this.currentFrame == 10 &&
+      this.currentSprite === this.sprites.idle.left
     ) {
       this.currentFrame = 0;
     }
@@ -97,12 +104,24 @@ class Player {
     ) {
       this.currentFrame = 0;
     }
+    if (
+      this.currentFrame === 8 &&
+      this.currentSprite === this.sprites.running.left
+    ) {
+      this.currentFrame = 0;
+    }
+    //update movement
+    this.frames++;
+    if (this.frames % 20 === 0) {
+      this.currentFrame++;
+    }
     this.position.x += this.velocity.x;
     this.position.y += this.velocity.y;
     //add gravity
     if (this.position.y + this.height + this.velocity.y <= canvas.height) {
       this.velocity.y += gravity;
     }
+
     this.draw();
   }
 }
@@ -263,6 +282,8 @@ addEventListener("keydown", (event) => {
       break;
     case "a":
       keysPressed.left = true;
+      player.currentSprite = player.sprites.running.left;
+      player.currentCropWidth = player.sprites.running.cropWidth;
       break;
     case "s":
       break;
@@ -280,11 +301,15 @@ addEventListener("keyup", (event) => {
       break;
     case "a":
       keysPressed.left = false;
+      player.currentSprite = player.sprites.idle.left;
+      player.currentCropWidth = player.sprites.idle.cropWidth;
       break;
     case "s":
       break;
     case "d":
       keysPressed.right = false;
+      player.currentSprite = player.sprites.idle.right;
+      player.currentCropWidth = player.sprites.idle.cropWidth;
       break;
   }
 });
