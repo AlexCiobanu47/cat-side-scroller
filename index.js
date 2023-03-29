@@ -1,8 +1,8 @@
 const platform = "./img/platform.png";
 const canvas = document.querySelector("canvas");
 const c = canvas.getContext("2d");
-canvas.width = innerWidth;
-canvas.height = innerHeight;
+canvas.width = 1024;
+canvas.height = 576;
 const gravity = 0.1;
 const playerSpeedX = 1;
 const playerSpeedY = 5;
@@ -67,7 +67,8 @@ class Platform {
 function animate() {
   requestAnimationFrame(animate);
   //clear canvas and redraw
-  c.clearRect(0, 0, canvas.width, canvas.height);
+  c.fillStyle = "white";
+  c.fillRect(0, 0, canvas.width, canvas.height);
   platforms.forEach((platform) => {
     platform.draw();
   });
@@ -148,7 +149,7 @@ addEventListener("keyup", (event) => {
 
 const player = new Player();
 const platforms = [
-  new Platform({ image: platformImage, x: 200, y: 800 }),
-  new Platform({ image: platformImage, x: 1000, y: 800 }),
+  new Platform({ image: platformImage, x: -1, y: 470 }),
+  new Platform({ image: platformImage, x: platformImage.width - 3, y: 470 }),
 ];
 animate();
