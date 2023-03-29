@@ -5,7 +5,6 @@ canvas.height = innerHeight;
 const gravity = 0.1;
 const playerSpeedX = 1;
 const playerSpeedY = 5;
-var canJump = true;
 const keysPressed = {
   right: false,
   left: false,
@@ -66,19 +65,20 @@ function animate() {
   platform.draw();
   player.update();
   //check for movement
-  if (keysPressed.right) {
+  if (keysPressed.right && player.position.x < 400) {
     player.velocity.x = playerSpeedX;
-  } else if (keysPressed.left) {
+  } else if (keysPressed.left && player.position.x > 100) {
     player.velocity.x = -playerSpeedX;
   } else {
     player.velocity.x = 0;
+    if (keysPressed.right) {
+      platform.position.x -= playerSpeedX;
+    } else if (keysPressed.left) {
+      platform.position.x += playerSpeedX;
+    }
   }
-  if (keysPressed.up && canJump) {
+  if (keysPressed.up) {
     player.velocity.y = -playerSpeedY;
-    canJump = false;
-  }
-  if (player.velocity.y === 0) {
-    canJump = true;
   }
   //check for player and platform collision
   if (
