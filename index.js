@@ -1,13 +1,14 @@
 const platform = "./img/platform.png";
 const hills = "/img/hills.png";
 const background = "/img/background.png";
+const jumpPlatform = "/img/platformSmallTall.png";
 const canvas = document.querySelector("canvas");
 const c = canvas.getContext("2d");
 canvas.width = 1024;
 canvas.height = 576;
 const gravity = 0.1;
 const playerSpeedX = 5;
-const playerSpeedY = 5;
+const playerSpeedY = 7;
 const parallaxOffset = playerSpeedX / 2;
 const platformImage = new Image();
 platformImage.src = platform;
@@ -15,6 +16,8 @@ const hillsImage = new Image();
 hillsImage.src = hills;
 const backgroundImage = new Image();
 backgroundImage.src = background;
+const jumpPlatformImage = new Image();
+jumpPlatformImage.src = jumpPlatform;
 const keysPressed = {
   right: false,
   left: false,
@@ -88,10 +91,16 @@ let player = new Player();
 let platforms = [];
 let sceneryObjects = [];
 let scrollOffset = 0;
+let canJump = true;
 //restart game function
 function init() {
   player = new Player();
   platforms = [
+    new Platform({
+      image: jumpPlatformImage,
+      x: platformImage.width * 5 + 300 - 2 - jumpPlatformImage.width,
+      y: 270,
+    }),
     new Platform({ image: platformImage, x: -1, y: 470 }),
     new Platform({ image: platformImage, x: platformImage.width - 3, y: 470 }),
     new Platform({
@@ -104,12 +113,23 @@ function init() {
       x: platformImage.width * 3 + 300,
       y: 470,
     }),
+    new Platform({
+      image: platformImage,
+      x: platformImage.width * 4 + 300 - 2,
+      y: 470,
+    }),
+    new Platform({
+      image: platformImage,
+      x: platformImage.width * 5 + 800 - 2,
+      y: 470,
+    }),
   ];
   sceneryObjects = [
     new SceneryObject({ image: backgroundImage, x: -1, y: -1 }),
     new SceneryObject({ image: hillsImage, x: -1, y: -1 }),
   ];
   scrollOffset = 0;
+  canJump = true;
 }
 function animate() {
   requestAnimationFrame(animate);
@@ -148,9 +168,14 @@ function animate() {
       });
     }
   }
-  if (keysPressed.up) {
+  if (keysPressed.up && canJump) {
     player.velocity.y = -playerSpeedY;
+    canJump = false;
   }
+  if (player.velocity.y === 0.1) {
+    canJump = true;
+  }
+  console.log(player.velocity.y);
   //check for player and platform collision
   platforms.forEach((platform) => {
     if (
