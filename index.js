@@ -2,12 +2,15 @@ const platform = "./img/platform.png";
 const hills = "/img/hills.png";
 const background = "/img/background.png";
 const jumpPlatform = "/img/platformSmallTall.png";
+const catIdle = "/img/catIdle.png";
+const catRunRight = "img/catRunRight.png";
+const catRunLeft = "/img/catRunLeft.png";
 const canvas = document.querySelector("canvas");
 const c = canvas.getContext("2d");
 canvas.width = 1024;
 canvas.height = 576;
 const gravity = 0.1;
-const playerSpeedX = 5;
+const playerSpeedX = 3;
 const playerSpeedY = 7;
 const parallaxOffset = playerSpeedX / 2;
 const platformImage = new Image();
@@ -18,6 +21,12 @@ const backgroundImage = new Image();
 backgroundImage.src = background;
 const jumpPlatformImage = new Image();
 jumpPlatformImage.src = jumpPlatform;
+const catIdleImage = new Image();
+catIdleImage.src = catIdle;
+const catRunRightImage = new Image();
+catRunRightImage.src = catRunRight;
+const catRunLeftImage = new Image();
+catRunLeftImage.src = catRunLeft;
 const keysPressed = {
   right: false,
   left: false,
@@ -31,7 +40,22 @@ class Player {
       x: 100,
       y: 100,
     };
-    this.width = 30;
+    this.image = catIdleImage;
+    this.frames = 0;
+    this.sprites = {
+      idle: {
+        right: catIdleImage,
+        cropWidth: 32,
+      },
+      running: {
+        right: catRunRightImage,
+        cropWidth: 32,
+      },
+    };
+    this.currentSprite = this.sprites.idle.right;
+    this.currentCropWidth = 32;
+    this.currentFrame = 0;
+    this.width = 100;
     this.height = 50;
     this.velocity = {
       x: 0,
@@ -39,11 +63,40 @@ class Player {
     };
   }
   draw() {
-    c.fillStyle = "red";
-    c.fillRect(this.position.x, this.position.y, this.width, this.height);
+    // c.fillStyle = "red";
+    // c.fillRect(this.position.x, this.position.y, this.width, this.height);
+    c.drawImage(
+      this.currentSprite,
+      this.currentCropWidth + 100 * this.currentFrame,
+      32,
+      38,
+      32,
+      this.position.x,
+      this.position.y,
+      this.width,
+      this.height
+    );
   }
   update() {
     //update movement
+    this.frames++;
+    if (this.frames % 20 === 0) {
+      this.currentFrame++;
+    }
+    //idle animation
+    if (
+      this.currentFrame == 10 &&
+      this.currentSprite === this.sprites.idle.right
+    ) {
+      this.currentFrame = 0;
+    }
+    //running animation
+    if (
+      this.currentFrame == 8 &&
+      this.currentSprite === this.sprites.running.right
+    ) {
+      this.currentFrame = 0;
+    }
     this.position.x += this.velocity.x;
     this.position.y += this.velocity.y;
     //add gravity
@@ -215,6 +268,8 @@ addEventListener("keydown", (event) => {
       break;
     case "d":
       keysPressed.right = true;
+      player.currentSprite = player.sprites.running.right;
+      player.currentCropWidth = player.sprites.running.cropWidth;
       break;
   }
 });
