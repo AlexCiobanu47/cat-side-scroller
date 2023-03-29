@@ -85,22 +85,11 @@ class SceneryObject {
 }
 //game initialization
 let player = new Player();
-let platforms = [
-  new Platform({ image: platformImage, x: -1, y: 470 }),
-  new Platform({ image: platformImage, x: platformImage.width - 3, y: 470 }),
-  new Platform({
-    image: platformImage,
-    x: platformImage.width * 2 + 100,
-    y: 470,
-  }),
-];
-let sceneryObjects = [
-  new SceneryObject({ image: backgroundImage, x: -1, y: -1 }),
-  new SceneryObject({ image: hillsImage, x: -1, y: -1 }),
-];
+let platforms = [];
+let sceneryObjects = [];
 let scrollOffset = 0;
 //restart game function
-function restart() {
+function init() {
   player = new Player();
   platforms = [
     new Platform({ image: platformImage, x: -1, y: 470 }),
@@ -108,6 +97,11 @@ function restart() {
     new Platform({
       image: platformImage,
       x: platformImage.width * 2 + 100,
+      y: 470,
+    }),
+    new Platform({
+      image: platformImage,
+      x: platformImage.width * 3 + 300,
       y: 470,
     }),
   ];
@@ -142,7 +136,7 @@ function animate() {
         platform.position.x -= playerSpeedX;
       });
       sceneryObjects.forEach((object) => {
-        object.position.x -= playerSpeedX + parallaxOffset;
+        object.position.x -= playerSpeedX - parallaxOffset;
       });
     } else if (keysPressed.left) {
       scrollOffset -= playerSpeedX;
@@ -178,7 +172,7 @@ function animate() {
   }
   //check lose condition
   if (player.position.y > canvas.height) {
-    restart();
+    init();
   }
 }
 //event listeners for movement
@@ -212,5 +206,5 @@ addEventListener("keyup", (event) => {
       break;
   }
 });
-
+init();
 animate();
