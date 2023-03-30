@@ -266,7 +266,7 @@ function animate() {
     }
   });
   //check win condition
-  if (scrollOffset > 1000) {
+  if (scrollOffset === 3300) {
     console.log("WIN");
   }
   //check lose condition
