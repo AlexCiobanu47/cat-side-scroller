@@ -1,11 +1,11 @@
-const platform = "/img/platform.png";
-const hills = "/img/hills.png";
-const background = "/img/background.png";
-const jumpPlatform = "/img/platformSmallTall.png";
-const catIdleRight = "/img/catIdleRight.png";
-const catIdleLeft = "/img/catIdleLeft.png";
-const catRunRight = "img/catRunRight.png";
-const catRunLeft = "/img/catRunLeft.png";
+const platform = "./img/platform.png";
+const hills = "./img/hills.png";
+const background = "./img/background.png";
+const jumpPlatform = "./img/platformSmallTall.png";
+const catIdleRight = "./img/catIdleRight.png";
+const catIdleLeft = "./img/catIdleLeft.png";
+const catRunRight = "./img/catRunRight.png";
+const catRunLeft = "./img/catRunLeft.png";
 const canvas = document.querySelector("canvas");
 const c = canvas.getContext("2d");
 canvas.width = 1024;
@@ -266,7 +266,7 @@ function animate() {
     }
   });
   //check win condition
-  if (scrollOffset > 1000) {
+  if (scrollOffset === 3300) {
     console.log("WIN");
   }
   //check lose condition
