@@ -155,7 +155,11 @@ class SceneryObject {
   draw() {
     // c.fillStyle = "blue";
     // c.fillRect(this.position.x, this.position.y, this.width, this.height);
-    c.drawImage(this.image, this.position.x, this.position.y);
+    try {
+      c.drawImage(this.image, this.position.x, this.position.y);
+    } catch (e) {
+      console.log("eroare imagine obiect");
+    }
   }
 }
 //game initialization
